@@ -1,7 +1,21 @@
 const express = require("express");
 const router = express.Router();
 module.exports = router;
+const multer = require("multer"); 
+const path = require("path");
 const Menu = require("../models/menu");
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, path.join(process.cwd(), "./storage")); 
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + '-' + path.extname(file.originalname)); 
+  }
+});
+
+const upload = multer({ storage: storage });
+
 
 router.get("/:restaurantId", async (req, res) => {
   try {
@@ -34,15 +48,22 @@ router.get("/:restaurantId", async (req, res) => {
   }
 });
 
-router.post("/", async (req, res) => {
+router.post("/", upload.single('Menu_image'), async (req, res) => { 
   try {
-    const menu = new Menu(req.body);
+    const { restaurant_id, menu_name, menu_description, menu_price, article_list } = req.body;
+    console.log("🚀 ~ router.post ~ req.body:", req.body)
 
-    if (!menu) {
-      return res.status(404).json({ message: "Not found" });
-    }
+    const menu = await Menu.create({
+      restaurant_id: 1,
+      menu_name,
+      menu_description,
+      menu_price,
+      article_list,
+      Menu_image: "/storage/" + req.file.filename 
+    });
+    console.log("🚀 ~ router.post ~ req.file:", req.file)
 
-    await menu.save();
+    await menu.save(); 
 
     res.status(201).json({ message: "Item posted" });
   } catch (error) {
@@ -50,14 +71,27 @@ router.post("/", async (req, res) => {
   }
 });
 
-router.put("/:menuId", async (req, res) => {
+router.put("/:menuId", upload.single('Menu_image'), async (req, res) => { // Ajout du middleware upload.single pour gérer l'upload de fichier
   try {
-    const menu = await Menu.findByIdAndUpdate(req.params.menuId, req.body, {
+    let updateData = {
+      restaurant_id: req.body.restaurant_id,
+      menu_name: req.body.menu_name,
+      menu_description: req.body.menu_description,
+      menu_price: req.body.menu_price,
+      article_list: req.body.article_list,
+    };
+
+    if (req.file) {
+      updateData.menu_image = "/storage/" + req.file.filename; // Mise à jour du chemin de l'image si une nouvelle image est uploadée
+    }
+
+    const menu = await Menu.findByIdAndUpdate(req.params.menuId, updateData, {
       new: true,
+      runValidators: true,
     });
 
     if (!menu) {
-      return res.status(404).json({ message: "Not found!" });
+      return res.status(404).json({ message: "Not found!" }); // Respond with 404 if menu not found
     }
 
     res.status(201).json({ message: "Item updated" });
