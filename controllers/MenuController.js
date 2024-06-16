@@ -51,18 +51,14 @@ router.get("/:restaurantId", async (req, res) => {
 router.post("/", upload.single('Menu_image'), async (req, res) => { 
   try {
     const { restaurant_id, menu_name, menu_description, menu_price, article_list } = req.body;
-    console.log("🚀 ~ router.post ~ req.body:", req.body)
-
     const menu = await Menu.create({
-      restaurant_id: 1,
+      restaurant_id,
       menu_name,
       menu_description,
       menu_price,
       article_list,
       Menu_image: "/storage/" + req.file.filename 
     });
-    console.log("🚀 ~ router.post ~ req.file:", req.file)
-
     await menu.save(); 
 
     res.status(201).json({ message: "Item posted" });
