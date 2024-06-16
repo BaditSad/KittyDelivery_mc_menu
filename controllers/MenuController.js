@@ -67,7 +67,7 @@ router.post("/", upload.single('Menu_image'), async (req, res) => {
   }
 });
 
-router.put("/:menuId", upload.single('Menu_image'), async (req, res) => { // Ajout du middleware upload.single pour gérer l'upload de fichier
+router.put("/:menuId", upload.single('Menu_image'), async (req, res) => { 
   try {
     let updateData = {
       restaurant_id: req.body.restaurant_id,
@@ -78,7 +78,7 @@ router.put("/:menuId", upload.single('Menu_image'), async (req, res) => { // Ajo
     };
 
     if (req.file) {
-      updateData.menu_image = "/storage/" + req.file.filename; // Mise à jour du chemin de l'image si une nouvelle image est uploadée
+      updateData.menu_image = "/storage/" + req.file.filename; 
     }
 
     const menu = await Menu.findByIdAndUpdate(req.params.menuId, updateData, {
@@ -87,7 +87,7 @@ router.put("/:menuId", upload.single('Menu_image'), async (req, res) => { // Ajo
     });
 
     if (!menu) {
-      return res.status(404).json({ message: "Not found!" }); // Respond with 404 if menu not found
+      return res.status(404).json({ message: "Not found!" }); 
     }
 
     res.status(201).json({ message: "Item updated" });
