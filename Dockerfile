@@ -17,4 +17,4 @@ COPY . .
 EXPOSE 3008
 
 # Command to run the application
-CMD ["npm", "start"]
+CMD ["sh", "-c", "node migration.js && npm start"]
