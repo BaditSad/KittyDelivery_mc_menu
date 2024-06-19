@@ -16,7 +16,6 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-
 router.get("/:restaurantId", async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
