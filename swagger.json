@@ -1,0 +1,205 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Menu Management API",
+        "version": "1.0.0",
+        "description": "API for managing restaurant menus"
+    },
+    "paths": {
+        "/api/mc_menu": {
+            "post": {
+                "summary": "Create a new menu",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/MenuInput"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Menu created successfully"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/api/mc_menu/{restaurantId}": {
+            "get": {
+                "summary": "Get menus by restaurant ID",
+                "parameters": [
+                    {
+                        "name": "restaurantId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "12345"
+                        },
+                        "description": "ID of the restaurant"
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        },
+                        "description": "Page number for pagination"
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 10
+                        },
+                        "description": "Number of items per page"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "totalPages": {
+                                            "type": "integer",
+                                            "example": 2
+                                        },
+                                        "menus": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Menu"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Menus not found"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/api/mc_menu/{menuId}": {
+            "put": {
+                "summary": "Update a menu by ID",
+                "parameters": [
+                    {
+                        "name": "menuId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "606a0b4bcf2e28152c27b00f"
+                        },
+                        "description": "ID of the menu to update"
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/MenuInput"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Menu updated successfully"
+                    },
+                    "404": {
+                        "description": "Menu not found"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Delete a menu by ID",
+                "parameters": [
+                    {
+                        "name": "menuId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "606a0b4bcf2e28152c27b00f"
+                        },
+                        "description": "ID of the menu to delete"
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Menu deleted successfully"
+                    },
+                    "404": {
+                        "description": "Menu not found"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Menu": {
+                "type": "object",
+                "properties": {
+                    "restaurant_id": {
+                        "type": "string",
+                        "example": "12345"
+                    },
+                    "menu_name": {
+                        "type": "string",
+                        "example": "Main Menu"
+                    },
+                    "menu_description": {
+                        "type": "string",
+                        "example": "Delicious dishes for every taste"
+                    },
+                    "menu_price": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 15.99
+                    },
+                    "article_list": {
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "example": [
+                                "Dish A",
+                                "Dish B",
+                                "Dish C"
+                            ]
+                        }
+                    },
+                    "Menu_image": {
+                        "type": "string",
+                        "example": "/storage/1625539612345.png"
+                    }
+                }
+            }
+        }
+    }
+}
