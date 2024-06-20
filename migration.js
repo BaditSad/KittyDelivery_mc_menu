@@ -8,7 +8,7 @@ var db = mongoose.connection;
 db.on("error", console.error.bind(console, "MongoDB connection error:"));
 
 db.once("open", async function () {
-  console.log("Connected to MongoDB");
+  console.log(`🛠️Connection to MongoDB...`);
 
   try {
     await Menu.deleteMany({});
